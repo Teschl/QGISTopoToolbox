@@ -38,7 +38,9 @@ class Gradient8(QgsProcessingAlgorithm):
         return self.tr("")
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__), 'icons', 'gradient8.png'))
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        icon_path = os.path.join(base_dir, 'icons', 'logo.png')
+        return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):
         self.addParameter(

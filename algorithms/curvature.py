@@ -4,7 +4,7 @@ import os
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterRasterLayer,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterBoolean,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterRasterDestination,
                        QgsProcessingException)
@@ -16,24 +16,24 @@ from qgis.PyQt.QtGui import QIcon
 # Not jet working on Linux (and MacOS) due to missing OSGeo4W Shell
 import topotoolbox as tt
 
-class Excesstopgraphy(QgsProcessingAlgorithm):
+class Curvature(QgsProcessingAlgorithm):
     INPUT_RASTER = 'INPUT_RASTER'
-    METHOD = 'METHOD'
-    THRESHOLD = 'THRESHOLD'
+    CTYPE = 'CTYPE'
+    MEANFILT = 'MEANFILT'
     OUTPUT = 'OUTPUT'
 
     def createInstance(self):
-        return Excesstopgraphy()
+        return Curvature()
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
     def name(self):
-        return 'excesstopgraphy'
+        return 'curvature'
 
     def displayName(self):
-        return self.tr('Excesstopgraphy')
-    
+        return self.tr('Curvature')
+
     def shortHelpString(self):
         return self.tr("")
 
@@ -51,20 +51,18 @@ class Excesstopgraphy(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.METHOD,
+                self.CTYPE,
                 'Calculation method',
-                options=['fsm2d', 'fmm2d'],
-                defaultValue='fsm2d',
+                options=['profc', 'planc', 'tangc', 'meanc', 'total'],
+                defaultValue='tangent',
                 optional=False
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.THRESHOLD,
-                'Threshold for excess topography calculation',
-                type=QgsProcessingParameterNumber.Double,
-                defaultValue=0.2,
-                minValue=0.0
+            QgsProcessingParameterBoolean(
+                self.MEANFILT,
+                self.tr(''),
+                defaultValue=False
             )
         )
         self.addParameter(
@@ -76,8 +74,8 @@ class Excesstopgraphy(QgsProcessingAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         input_raster = self.parameterAsRasterLayer(parameters, self.INPUT_RASTER, context)
-        threshold = self.parameterAsNumber(parameters, self.THRESHOLD, context)
-        method = self.parameterAsEnum(parameters, self.METHOD, context)
+        meanfilt = self.parameterAsBoolean(parameters, self.MEANFILT, context)
+        ctype = self.parameterAsEnum(parameters, self.CTYPE, context)
 
         if input_raster is None:
             raise QgsProcessingException("Invalid input raster layer")
@@ -85,12 +83,18 @@ class Excesstopgraphy(QgsProcessingAlgorithm):
         input_path = input_raster.source()
         dem = tt.read_tif(input_path)
 
-        if method == 0:
-            method = 'fsm2d'
+        if ctype == 0:
+            ctype = 'profc'
+        elif ctype == 1:
+            ctype = 'planc'
+        elif ctype == 2:
+            ctype = 'tangc'
+        elif ctype == 3:
+            ctype = 'meanc'
         else:
-            method = 'fmm2d'
+            ctype = 'total'
 
-        result_dem = dem.excesstopography(threshold=threshold, method=method)
+        result_dem = dem.curvature(ctype=ctype, meanfilt=meanfilt)
 
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         tt.write_tif(result_dem, output_path)

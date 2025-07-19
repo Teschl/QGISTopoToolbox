@@ -34,12 +34,11 @@ class Fillsinks(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr("Fills sinks in a DEM using topotoolbox's fillsinks method")
-    
-    def shortHelpString(self):
-        return self.tr("Fills sinks in a DEM using topotoolbox's fillsinks method")
 
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__), 'icons', 'fillsinks.png'))
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        icon_path = os.path.join(base_dir, 'icons', 'fillsinks.png')
+        return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):
         self.addParameter(
