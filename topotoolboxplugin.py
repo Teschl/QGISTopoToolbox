@@ -1,0 +1,40 @@
+# pylint: disable=import-error
+from qgis.PyQt.QtWidgets import QAction
+from qgis.core import (
+    QgsProcessingProvider,
+    QgsApplication,
+)
+from qgis.PyQt.QtGui import QIcon
+import os
+
+# import algorithms for loadAlgorithms function
+from .algorithms.fillsinks import Fillsinks
+from .algorithms.excesstopgraphy import Excesstopgraphy
+from .algorithms.gradient8 import Gradient8
+
+class TopoToolboxProvider(QgsProcessingProvider):
+    def __init__(self):
+        super().__init__()
+    def loadAlgorithms(self):
+        self.addAlgorithm(Fillsinks())
+        self.addAlgorithm(Excesstopgraphy())
+        self.addAlgorithm(Gradient8())
+    def id(self):
+        return 'topotoolbox'
+    def name(self):
+        return 'TopoToolbox'
+    def icon(self):
+        return QIcon(os.path.join(os.path.dirname(__file__), 'icons', 'logo.png'))
+
+class TopoToolboxPlugin:
+    def __init__(self, iface):
+        self.iface = iface
+        self.provider = None
+    def initProcessing(self):
+        self.provider = TopoToolboxProvider()
+        QgsApplication.processingRegistry().addProvider(self.provider)
+    def initGui(self):
+        self.initProcessing()
+    def unload(self):
+        if self.provider:
+            QgsApplication.processingRegistry().removeProvider(self.provider)
