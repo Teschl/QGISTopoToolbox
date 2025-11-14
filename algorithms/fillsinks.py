@@ -1,3 +1,5 @@
+import os
+
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessingAlgorithm, 
                        QgsProcessingParameterRasterLayer,
@@ -5,14 +7,9 @@ from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterRasterDestination,
                        QgsProcessingException)
 from qgis.PyQt.QtGui import QIcon
-from osgeo import gdal, osr
-import numpy as np
 
-import os
-import subprocess
-import sys
+import topotoolbox as tt
 
-import topotoolbox
 # Import topotoolbox from wheels if not installed in OSGeo4W Shell
 # linux https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l
 
@@ -67,13 +64,13 @@ class Fillsinks(QgsProcessingAlgorithm):
             raise QgsProcessingException("Invalid input raster layer")
 
         input_path = input_raster.source()
-        #dem = tt.read_tif(input_path)
-        #filled_dem = dem.fillsinks(hybrid=use_hybrid)
+        dem = tt.read_tif(input_path)
+        filled_dem = dem.fillsinks(hybrid=use_hybrid)
 
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        #tt.write_tif(filled_dem, output_path)
+        tt.write_tif(filled_dem, output_path)
 
         # placeholder for linux:
-        output_path = input_path
+        # output_path = input_path
 
         return {self.OUTPUT: output_path}

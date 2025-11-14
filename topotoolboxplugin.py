@@ -1,20 +1,12 @@
-from qgis.PyQt.QtWidgets import QAction
+# from qgis.PyQt.QtWidgets import QAction
 from qgis.core import (
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterRasterLayer,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterRasterDestination,
-    QgsProcessingException,
     QgsProcessingProvider,
     QgsApplication,
-    QgsProcessingRegistry
 )
-from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
-from .fillsinks import Fillsinks
 import os
-import sys
 
+from .algorithms.fillsinks import Fillsinks
 
 class TopoToolboxProvider(QgsProcessingProvider):
     def __init__(self):

@@ -12,5 +12,6 @@ homepage=https://topotoolbox.wordpress.com/
 category=Analysis
 icon=icons/logo.png
 
+plugin_dependencies=qpip
 experimental=False
 deprecated=False

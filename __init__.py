@@ -28,5 +28,5 @@ def classFactory(iface):
 
         return DummyPlugin()
         
-    from .topotoolbox import TopoToolboxPlugin
+    from .topotoolboxplugin import TopoToolboxPlugin
     return TopoToolboxPlugin(iface)
