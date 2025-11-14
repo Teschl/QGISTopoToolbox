@@ -2,38 +2,42 @@
 
 ## How to use
 
-TODO
+Once [installed](#installing) and enabled, the TopoToolbox plugin integrates with QGIS through the Processing Toolbox, giving you access to a set of terrain-analysis tools based on the topotoolbox Python library. All tools included in the plugin are located in:
+
+`Processing Toolbox → TopoToolbox`
+
+Inside the TopoToolbox group, you will find all available algorithms, including:
+
+- Fillsinks  
+- Excesstopography  
+- Gradient8
+- Curvature  
+- Evans slope
+
+The layers are saved as .tif files. This means that the algorithms represent workflows made up of one or more topotoolbox functions based on the desired output.
 
 ## Installing
 
-1. Compress repository into a .zip file
-2. Navigate to 'Plugins'->'Manage and install Plugins...'
+1. Compress the repository into a .zip file
+2. Navigate to 'Plugins' → 'Manage and Install Plugins...'
 3. Click on 'Install from ZIP'
 4. Select the .zip file and click 'Install Plugin'
 
-The installation will fail if the topotoolbox package is not installed and on the Python-Path of the QGIS installation. As of this moment there is no clean method to automatically install dependencies that are missing for plugins to work. [It's generally not wanted to install packages without properly handeling versioning as to not break any other plugins.](https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin) Some possible solutions have been discussed: [here](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-1997009497), [QPIP Plugin](https://plugins.qgis.org/plugins/a00_qpip/#plugin-details) or [here](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-815844271).
-The QPIP plugin might be a good solution going forward, but it's still in the early stages of development.
+This plugin requires the Python package topotoolbox, which is not installed in QGIS by default. This is why we use the plugin [qpip](https://plugins.qgis.org/plugins/a00_qpip/) (which is still in early development and may cause errors). If you try to install the TopoToolbox plugin without having qpip installed beforehand, QGIS will ask you to install qpip. After the installation, qpip will ask you to install the missing dependencies. Install them and everything should be in working order.
 
-### Installing the TopoToolbox Package in QGIS for Windows
+> [!WARNING]  
+> The dependencies will be installed with their specified versions. This means that dependencies shared across different plugins may break due to different requirements.
 
-1. Open the OSGeo4W Shell
-2. Install the topotoolbox using: `pip install topotoolbox`
+We have to do it this way because QGIS only ships with certain packages installed. However, this plugin needs the topotoolbox package and its dependencies. On Windows, the OSGeo4W shell can be used to install packages that can be used in QGIS. On Linux, QGIS uses the default Python installation. Therefore, for packages to be usable, they must be added to the default Python path. The qpip plugin solves this issue.
 
-### Installing the TopoToolbox Package in QGIS for Linux
+## More resources regarding installing external packages
 
-On Linux the TopoToolbox package has to be added to the Python-Path since QGIS is not using a standalone Python installation on Linux.
-
-## Developer information
-
-TODO
-
-## More resources regarding installing external Packages
-
-- [https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern](https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern)
-- [https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies](https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies)
-- [https://github.com/opengisch/qpip](https://github.com/opengisch/qpip)
-- [https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies](https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies)
-- [https://gis.stackexchange.com/questions/45585/what-is-the-osgeo4w-equivalent-for-linux](https://gis.stackexchange.com/questions/45585/what-is-the-osgeo4w-equivalent-for-linux)
-- [https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l](https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l)
+- [https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern](https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern)  
+- [https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin](https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin)  
+- [https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies](https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies)  
+- [https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies](https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies)  
+- [https://github.com/opengisch/qpip](https://github.com/opengisch/qpip) / [https://plugins.qgis.org/plugins/a00_qpip/#plugin-details](https://plugins.qgis.org/plugins/a00_qpip/#plugin-details)
+- [https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-1997009497](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-1997009497)  
+- [https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-815844271](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-815844271)  
+- [https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l](https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l)  
 - [https://gis.stackexchange.com/questions/141320/installing-3rd-party-python-libraries-for-qgis-on-windows](https://gis.stackexchange.com/questions/141320/installing-3rd-party-python-libraries-for-qgis-on-windows)
-- [https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin](https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin)
