@@ -1,17 +1,21 @@
 [general]
 name=TopoToolbox
-description=Analysis and visualization of topographic data
+description=Analysis and visualization of topographic data.
+about=
 version=0.0.1
+tracker=
+repository=https://github.com/TopoToolbox/
 qgisMinimumVersion=3.0
 author=
 email=
-repository=https://github.com/TopoToolbox/
 
-tags=
-homepage=https://topotoolbox.wordpress.com/
 category=Analysis
+tags=analysis
+homepage=https://topotoolbox.wordpress.com/
+
 icon=icons/logo.png
 
-plugin_dependencies=qpip
 experimental=False
 deprecated=False
+
+plugin_dependencies=qpip

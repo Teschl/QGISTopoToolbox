@@ -1,18 +1,28 @@
-# from qgis.PyQt.QtWidgets import QAction
+import os
+
 from qgis.core import (
     QgsProcessingProvider,
     QgsApplication,
 )
 from qgis.PyQt.QtGui import QIcon
-import os
 
 from .algorithms.fillsinks import Fillsinks
+from .algorithms.excesstopgraphy import Excesstopgraphy
+from .algorithms.gradient8 import Gradient8
+from .algorithms.curvature import Curvature
+from .algorithms.evansslope import Evansslope
+from .algorithms.extract_streams import ExtractStreams
 
 class TopoToolboxProvider(QgsProcessingProvider):
     def __init__(self):
         super().__init__()
     def loadAlgorithms(self):
         self.addAlgorithm(Fillsinks())
+        self.addAlgorithm(Excesstopgraphy())
+        self.addAlgorithm(Gradient8())
+        self.addAlgorithm(Curvature())
+        self.addAlgorithm(Evansslope())
+        self.addAlgorithm(ExtractStreams())
     def id(self):
         return 'topotoolbox'
     def name(self):

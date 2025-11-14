@@ -1,64 +1,78 @@
 import os
 
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (QgsProcessingAlgorithm, 
+from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterRasterLayer,
-                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterEnum,
                        QgsProcessingParameterRasterDestination,
                        QgsProcessingException)
 from qgis.PyQt.QtGui import QIcon
 
 import topotoolbox as tt
 
-class Fillsinks(QgsProcessingAlgorithm):
+class Excesstopgraphy(QgsProcessingAlgorithm):
     INPUT_RASTER = 'INPUT_RASTER'
-    HYBRID = 'HYBRID'
+    METHOD = 'METHOD'
+    THRESHOLD = 'THRESHOLD'
     OUTPUT = 'OUTPUT'
 
     def createInstance(self):
-        return Fillsinks()
-    
+        return Excesstopgraphy()
+
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
     def name(self):
-        return 'fillsinks'
+        return 'excesstopgraphy'
 
     def displayName(self):
-        return self.tr('Fillsinks')
-
+        return self.tr('Excesstopgraphy')
+    
     def shortHelpString(self):
-        return self.tr("Fills sinks in a DEM using topotoolbox's fillsinks method")
+        return self.tr("")
 
     def icon(self):
         base_dir = os.path.dirname(os.path.dirname(__file__))
-        icon_path = os.path.join(base_dir, 'icons', 'fillsinks.png')
+        icon_path = os.path.join(base_dir, 'icons', 'logo.png')
         return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT_RASTER,
-                self.tr('Input DEM raster')
+                self.tr('Input DEM')
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.HYBRID,
-                self.tr('Use hybrid reconstruction algorithm'),
-                defaultValue=True 
+            QgsProcessingParameterEnum(
+                self.METHOD,
+                'Calculation method',
+                options=['fsm2d', 'fmm2d'],
+                defaultValue='fsm2d',
+                optional=False
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.THRESHOLD,
+                'Threshold for excess topography calculation',
+                type=QgsProcessingParameterNumber.Double,
+                defaultValue=0.2,
+                minValue=0.0
             )
         )
         self.addParameter(
             QgsProcessingParameterRasterDestination(
                 self.OUTPUT,
-                self.tr('Filled DEM')
+                self.tr('')
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
         input_raster = self.parameterAsRasterLayer(parameters, self.INPUT_RASTER, context)
-        use_hybrid = self.parameterAsBool(parameters, self.HYBRID, context)
+        threshold = self.parameterAsNumber(parameters, self.THRESHOLD, context)
+        method = self.parameterAsEnum(parameters, self.METHOD, context)
 
         if input_raster is None:
             raise QgsProcessingException("Invalid input raster layer")
@@ -66,8 +80,13 @@ class Fillsinks(QgsProcessingAlgorithm):
         input_path = input_raster.source()
         dem = tt.read_tif(input_path)
 
-        filled_dem = dem.fillsinks(hybrid=use_hybrid)
+        if method == 0:
+            method = 'fsm2d'
+        else:
+            method = 'fmm2d'
+
+        result_dem = dem.excesstopography(threshold=threshold, method=method)
 
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        tt.write_tif(filled_dem, output_path)
+        tt.write_tif(result_dem, output_path)
         return {self.OUTPUT: output_path}
