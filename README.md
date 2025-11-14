@@ -13,6 +13,7 @@ Inside the TopoToolbox group, you will find all available algorithms, including:
 - Gradient8
 - Curvature  
 - Evans slope
+- Extract Streams
 
 The layers are saved as .tif files. This means that the algorithms represent workflows made up of one or more topotoolbox functions based on the desired output.
 
