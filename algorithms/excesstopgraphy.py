@@ -11,23 +11,23 @@ from qgis.PyQt.QtGui import QIcon
 
 import topotoolbox as tt
 
-class Excesstopgraphy(QgsProcessingAlgorithm):
+class Excesstopography(QgsProcessingAlgorithm):
     INPUT_RASTER = 'INPUT_RASTER'
     METHOD = 'METHOD'
     THRESHOLD = 'THRESHOLD'
     OUTPUT = 'OUTPUT'
 
     def createInstance(self):
-        return Excesstopgraphy()
+        return Excesstopography()
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
     def name(self):
-        return 'excesstopgraphy'
+        return 'Excesstopography'
 
     def displayName(self):
-        return self.tr('Excesstopgraphy')
+        return self.tr('Excesstopography')
     
     def shortHelpString(self):
         return self.tr("")
