@@ -19,7 +19,7 @@ The layers are saved as .tif files. This means that the algorithms represent wor
 
 ## Installing
 
-1. Compress the repository into a .zip file
+1. Compress the repository into a .zip file [`python3 zip_plugin.py`](###Script for creating plugin zip)
 2. Navigate to 'Plugins' → 'Manage and Install Plugins...'
 3. Click on 'Install from ZIP'
 4. Select the .zip file and click 'Install Plugin'
@@ -30,6 +30,12 @@ This plugin requires the Python package topotoolbox, which is not installed in Q
 > The dependencies will be installed with their specified versions. This means that dependencies shared across different plugins may break due to different requirements.
 
 We have to do it this way because QGIS only ships with certain packages installed. However, this plugin needs the topotoolbox package and its dependencies. On Windows, the OSGeo4W shell can be used to install packages that can be used in QGIS. On Linux, QGIS uses the default Python installation. Therefore, for packages to be usable, they must be added to the default Python path. The qpip plugin solves this issue.
+
+### Script for creating plugin zip
+
+Since manually zipping the whole repository may include unwanted files (.venv) you can use the zip_plugin.py command line tool. Use it by calling `python3 zip_plugin.py`
+
+To use a custom name for the created zip, use `python3 zip_plugin.py -o SomeDifferentName.zip`
 
 ## More resources regarding installing external packages
 
