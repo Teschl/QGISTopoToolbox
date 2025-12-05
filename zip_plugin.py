@@ -11,7 +11,7 @@ import zipfile
 PLUGIN_NAME = "QGIS_TopoToolbox.zip"
 EXCLUDE_DIRS = ['.venv', '__pycache__', '.git', '.vscode', '.idea']
 EXCLUDE_FILES = []
-
+PLUGIN_ROOT_FOLDER = 'QGISTopoToolbox'
 
 def should_exclude(path: str, base_dir: str, zip_filename: str) -> bool:
     """Checks if a path should be excluded from the zip.
@@ -108,7 +108,7 @@ def create_zip(plugin_name: str):
                         continue
 
                     relative_path = os.path.relpath(file_path, script_dir)
-                    zipf.write(file_path, relative_path)
+                    zipf.write(file_path, os.path.join(PLUGIN_ROOT_FOLDER, relative_path))
 
         print(f"Plugin compressed as {output_path}")
 
