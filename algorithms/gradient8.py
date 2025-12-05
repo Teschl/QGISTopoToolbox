@@ -30,7 +30,8 @@ class Gradient8(QgsProcessingAlgorithm):
         return self.tr('Gradient8')
     
     def shortHelpString(self):
-        return self.tr("")
+        return self.tr("Compute the gradient of a digital elevation model "
+                       "using an 8-direction algorithm.")
 
     def icon(self):
         base_dir = os.path.dirname(os.path.dirname(__file__))
