@@ -12,6 +12,8 @@ from .algorithms.gradient8 import Gradient8
 from .algorithms.curvature import Curvature
 from .algorithms.evansslope import Evansslope
 from .algorithms.extract_streams import ExtractStreams
+from .algorithms.prominence import Prominence
+from .algorithms.zscore import ZScore
 
 class TopoToolboxProvider(QgsProcessingProvider):
     def __init__(self):
@@ -23,6 +25,8 @@ class TopoToolboxProvider(QgsProcessingProvider):
         self.addAlgorithm(Curvature())
         self.addAlgorithm(Evansslope())
         self.addAlgorithm(ExtractStreams())
+        self.addAlgorithm(Prominence())
+        self.addAlgorithm(ZScore())
     def id(self):
         return 'topotoolbox'
     def name(self):
