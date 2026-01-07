@@ -8,10 +8,10 @@ Once [installed](#installing) and enabled, the TopoToolbox plugin integrates wit
 
 Inside the TopoToolbox group, you will find all available algorithms, including:
 
-- Fillsinks  
-- Excesstopography  
+- Fillsinks
+- Excesstopography
 - Gradient8
-- Curvature  
+- Curvature
 - Evans slope
 - Extract Streams
 
@@ -26,7 +26,7 @@ The layers are saved as .tif files. This means that the algorithms represent wor
 
 This plugin requires the Python package topotoolbox, which is not installed in QGIS by default. This is why we use the plugin [qpip](https://plugins.qgis.org/plugins/a00_qpip/) (which is still in early development and may cause errors). If you try to install the TopoToolbox plugin without having qpip installed beforehand, QGIS will ask you to install qpip. After the installation, qpip will ask you to install the missing dependencies. Install them and everything should be in working order.
 
-> [!WARNING]  
+> [!WARNING]
 > The dependencies will be installed with their specified versions. This means that dependencies shared across different plugins may break due to different requirements.
 
 We have to do it this way because QGIS only ships with certain packages installed. However, this plugin needs the topotoolbox package and its dependencies. On Windows, the OSGeo4W shell can be used to install packages that can be used in QGIS. On Linux, QGIS uses the default Python installation. Therefore, for packages to be usable, they must be added to the default Python path. The qpip plugin solves this issue.
@@ -39,12 +39,42 @@ To use a custom name for the created zip, use `python3 zip_plugin.py -o SomeDiff
 
 ## More resources regarding installing external packages
 
-- [https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern](https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern)  
-- [https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin](https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin)  
-- [https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies](https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies)  
-- [https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies](https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies)  
+- [https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern](https://gis.stackexchange.com/questions/392713/plugin-development-for-qgis-3-16-windows-how-to-handle-dependencies-on-extern)
+- [https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin](https://gis.stackexchange.com/questions/311726/adding-missing-python-packages-to-qgis-plugin)
+- [https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies](https://gis.stackexchange.com/questions/468241/qgis-python-plugin-install-python-depencies)
+- [https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies](https://github.com/ivanlonel/qgis-plugin-with-pip-dependencies)
 - [https://github.com/opengisch/qpip](https://github.com/opengisch/qpip) / [https://plugins.qgis.org/plugins/a00_qpip/#plugin-details](https://plugins.qgis.org/plugins/a00_qpip/#plugin-details)
-- [https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-1997009497](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-1997009497)  
-- [https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-815844271](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-815844271)  
-- [https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l](https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l)  
+- [https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-1997009497](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-1997009497)
+- [https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-815844271](https://github.com/qgis/QGIS-Enhancement-Proposals/issues/202#issuecomment-815844271)
+- [https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l](https://stackoverflow.com/questions/64008273/how-can-i-install-a-third-party-python-library-for-example-pandas-in-qgis-on-l)
 - [https://gis.stackexchange.com/questions/141320/installing-3rd-party-python-libraries-for-qgis-on-windows](https://gis.stackexchange.com/questions/141320/installing-3rd-party-python-libraries-for-qgis-on-windows)
+
+## Developing
+
+Since QPIP attempts to install all packages in the `requiirements.txt` when installing the QGIS TopoToolbox plugin, the packages used for ensuring code quality are in a separate file. Use `pip install -r requirements-dev.txt` to install everything needed to be able to run the tests (This will not install the QGIS packages that are used, they are only provided in QGIS).
+
+Instead of pylint/mypy, like in the PyTopoToolbox package, we use the black formatter and ruff for this plugin. This is, because: writing a new `QgsProcessingAlgorithm` involves a lot of repeating functions which don't need a docstring, the imported qgis modules are not available for type checking, qgis naming conventions not matching pep8 guidelines, [...].
+
+To check if your code complies with our standards use pre-commit. This will run all checks that will be running when you open a new pull-request and format your python files.
+
+```bash
+# Add hook:
+pre-commit install
+# Remove hook:
+pre-commit uninstall
+# To run manually:
+pre-commit run
+# To run on all files:
+pre-commit run --all-files
+```
+
+You can also use black and ruff manually:
+
+```bash
+# Reformat files
+black .
+# Check what would be reformated
+black --check --diff .
+# Check ruff checks
+ruff check .
+```
