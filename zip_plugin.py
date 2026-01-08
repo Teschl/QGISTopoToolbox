@@ -9,9 +9,10 @@ import sys
 import zipfile
 
 PLUGIN_NAME = "QGIS_TopoToolbox.zip"
-EXCLUDE_DIRS = ['.venv', '__pycache__', '.git', '.vscode', '.idea']
+EXCLUDE_DIRS = [".venv", "__pycache__", ".git", ".vscode", ".idea"]
 EXCLUDE_FILES = []
-PLUGIN_ROOT_FOLDER = 'QGISTopoToolbox'
+PLUGIN_ROOT_FOLDER = "QGISTopoToolbox"
+
 
 def should_exclude(path: str, base_dir: str, zip_filename: str) -> bool:
     """Checks if a path should be excluded from the zip.
@@ -59,12 +60,14 @@ def get_user_confirmation(plugin_name: str) -> bool:
         True if user confirms removal, False otherwise.
     """
     while True:
-        response = input(
-            f"Zip file '{plugin_name}' already exists. Remove it? [y/N]\n"
-                        ).strip().lower()
-        if response in ['y', 'yes', '']:
+        response = (
+            input(f"Zip file '{plugin_name}' already exists. Remove it? [y/N]\n")
+            .strip()
+            .lower()
+        )
+        if response in ["y", "yes", ""]:
             return True
-        if response in ['n', 'no']:
+        if response in ["n", "no"]:
             return False
         print("Please enter 'y'/'yes'/enter or 'n'/'no'")
 
@@ -96,10 +99,15 @@ def create_zip(plugin_name: str):
 
     # create zip file
     try:
-        with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zipf:
             for root, dirs, files in os.walk(script_dir):
-                dirs[:] = [d for d in dirs if not should_exclude(
-                    os.path.join(root, d), script_dir, plugin_name)]
+                dirs[:] = [
+                    d
+                    for d in dirs
+                    if not should_exclude(
+                        os.path.join(root, d), script_dir, plugin_name
+                    )
+                ]
 
                 for file in files:
                     file_path = os.path.join(root, file)
@@ -108,7 +116,9 @@ def create_zip(plugin_name: str):
                         continue
 
                     relative_path = os.path.relpath(file_path, script_dir)
-                    zipf.write(file_path, os.path.join(PLUGIN_ROOT_FOLDER, relative_path))
+                    zipf.write(
+                        file_path, os.path.join(PLUGIN_ROOT_FOLDER, relative_path)
+                    )
 
         print(f"Plugin compressed as {output_path}")
 
@@ -119,8 +129,12 @@ def create_zip(plugin_name: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Zip QGIS TopoToolbox Plugin")
-    parser.add_argument('-o', '--output', default=PLUGIN_NAME,
-                        help="Output zip filename. Default is QGIS_TopoToolbox.zip")
+    parser.add_argument(
+        "-o",
+        "--output",
+        default=PLUGIN_NAME,
+        help="Output zip filename. Default is QGIS_TopoToolbox.zip",
+    )
 
     args = parser.parse_args()
 

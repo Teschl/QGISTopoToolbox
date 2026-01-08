@@ -1,75 +1,81 @@
 import os
 
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (QgsProcessingAlgorithm,
-                       QgsProcessingParameterRasterLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterRasterDestination,
-                       QgsProcessingException)
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterRasterLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterRasterDestination,
+    QgsProcessingException,
+)
 from qgis.PyQt.QtGui import QIcon
 
 import topotoolbox as tt
 
+
 class Evansslope(QgsProcessingAlgorithm):
-    INPUT_RASTER = 'INPUT_RASTER'
-    MODE = 'MODE'
-    MODIFIED = 'MODIFIED'
-    OUTPUT = 'OUTPUT'
+    INPUT_RASTER = "INPUT_RASTER"
+    MODE = "MODE"
+    MODIFIED = "MODIFIED"
+    OUTPUT = "OUTPUT"
 
     def createInstance(self):
         return Evansslope()
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate("Processing", string)
 
     def name(self):
-        return 'evansslope'
+        return "evansslope"
 
     def displayName(self):
-        return self.tr('Evansslope')
+        return self.tr("Evansslope")
 
     def shortHelpString(self):
         return self.tr("")
 
     def icon(self):
         base_dir = os.path.dirname(os.path.dirname(__file__))
-        icon_path = os.path.join(base_dir, 'icons', 'logo.png')
+        icon_path = os.path.join(base_dir, "icons", "logo.png")
         return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):
         self.addParameter(
-            QgsProcessingParameterRasterLayer(
-                self.INPUT_RASTER,
-                self.tr('Input DEM')
-            )
+            QgsProcessingParameterRasterLayer(self.INPUT_RASTER, self.tr("Input DEM"))
         )
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.MODE,
-                'Calculation method',
-                options=['reflect', 'constant', 'nearest', 'mirror', 'wrap', 'grid-mirror', 'grid-constant', 'grid-wrap'],
-                defaultValue='nearest',
-                optional=False
+                "Calculation method",
+                options=[
+                    "reflect",
+                    "constant",
+                    "nearest",
+                    "mirror",
+                    "wrap",
+                    "grid-mirror",
+                    "grid-constant",
+                    "grid-wrap",
+                ],
+                defaultValue="nearest",
+                optional=False,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.MODIFIED,
-                self.tr(''),
-                defaultValue=False
+                self.MODIFIED, self.tr(""), defaultValue=False
             )
         )
         self.addParameter(
-            QgsProcessingParameterRasterDestination(
-                self.OUTPUT,
-                self.tr('')
-            )
+            QgsProcessingParameterRasterDestination(self.OUTPUT, self.tr(""))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        input_raster = self.parameterAsRasterLayer(parameters, self.INPUT_RASTER, context)
-        mode =  self.parameterAsEnum(parameters, self.MODE, context)
+        input_raster = self.parameterAsRasterLayer(
+            parameters, self.INPUT_RASTER, context
+        )
+        mode = self.parameterAsEnum(parameters, self.MODE, context)
         modified = self.parameterAsBoolean(parameters, self.MODIFIED, context)
 
         if input_raster is None:
@@ -78,7 +84,16 @@ class Evansslope(QgsProcessingAlgorithm):
         input_path = input_raster.source()
         dem = tt.read_tif(input_path)
 
-        modes = ['reflect', 'constant', 'nearest', 'mirror', 'wrap', 'grid-mirror', 'grid-constant', 'grid-wrap']
+        modes = [
+            "reflect",
+            "constant",
+            "nearest",
+            "mirror",
+            "wrap",
+            "grid-mirror",
+            "grid-constant",
+            "grid-wrap",
+        ]
         mode = modes[mode]
 
         result_dem = dem.evansslope(mode=mode, modified=modified)

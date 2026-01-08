@@ -15,9 +15,11 @@ from .algorithms.extract_streams import ExtractStreams
 from .algorithms.prominence import Prominence
 from .algorithms.zscore import ZScore
 
+
 class TopoToolboxProvider(QgsProcessingProvider):
     def __init__(self):
         super().__init__()
+
     def loadAlgorithms(self):
         self.addAlgorithm(Fillsinks())
         self.addAlgorithm(Excesstopography())
@@ -27,22 +29,29 @@ class TopoToolboxProvider(QgsProcessingProvider):
         self.addAlgorithm(ExtractStreams())
         self.addAlgorithm(Prominence())
         self.addAlgorithm(ZScore())
+
     def id(self):
-        return 'topotoolbox'
+        return "topotoolbox"
+
     def name(self):
-        return 'TopoToolbox'
+        return "TopoToolbox"
+
     def icon(self):
-        return QIcon(os.path.join(os.path.dirname(__file__), 'icons', 'logo.png'))
+        return QIcon(os.path.join(os.path.dirname(__file__), "icons", "logo.png"))
+
 
 class TopoToolboxPlugin:
     def __init__(self, iface):
         self.iface = iface
         self.provider = None
+
     def initProcessing(self):
         self.provider = TopoToolboxProvider()
         QgsApplication.processingRegistry().addProvider(self.provider)
+
     def initGui(self):
         self.initProcessing()
+
     def unload(self):
         if self.provider:
             QgsApplication.processingRegistry().removeProvider(self.provider)
