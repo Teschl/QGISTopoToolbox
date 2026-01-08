@@ -7,7 +7,7 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
     QgsProcessingParameterRasterDestination,
-    QgsProcessingException
+    QgsProcessingException,
 )
 from qgis.PyQt.QtGui import QIcon
 
@@ -16,22 +16,22 @@ import topotoolbox as tt
 
 class ExtractStreams(QgsProcessingAlgorithm):
 
-    INPUT_RASTER = 'INPUT_RASTER'
-    THRESHOLD = 'THRESHOLD'
-    UNITS = 'UNITS'
-    OUTPUT = 'OUTPUT'
+    INPUT_RASTER = "INPUT_RASTER"
+    THRESHOLD = "THRESHOLD"
+    UNITS = "UNITS"
+    OUTPUT = "OUTPUT"
 
     def createInstance(self):
         return ExtractStreams()
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate("Processing", string)
 
     def name(self):
-        return 'extractstreams'
+        return "extractstreams"
 
     def displayName(self):
-        return self.tr('Extract Streams')
+        return self.tr("Extract Streams")
 
     def shortHelpString(self):
         return self.tr(
@@ -39,69 +39,64 @@ class ExtractStreams(QgsProcessingAlgorithm):
             "StreamObject. Threshold can be int/float or 2D matrix. "
             "Units must be one of: pixels, mapunits, m2, km2."
         )
-        
-    def icon(self):
-        base_dir = os.path.dirname(os.path.dirname(__file__))
-        icon_path = os.path.join(base_dir, 'icons', 'logo.png')
-        return QIcon(icon_path)
 
     def icon(self):
         base_dir = os.path.dirname(os.path.dirname(__file__))
-        icon_path = os.path.join(base_dir, 'icons', 'streams.png')
+        icon_path = os.path.join(base_dir, "icons", "logo.png")
         return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):
 
         self.addParameter(
             QgsProcessingParameterRasterLayer(
-                self.INPUT_RASTER,
-                self.tr('Input DEM raster')
+                self.INPUT_RASTER, self.tr("Input DEM raster")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.THRESHOLD,
-                self.tr('Threshold (0 = auto threshold)'),
+                self.tr("Threshold (0 = auto threshold)"),
                 QgsProcessingParameterNumber.Double,
-                defaultValue=1000.0
+                defaultValue=1000.0,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.UNITS,
-                self.tr('Units'),
-                options=['pixels', 'mapunits', 'm2', 'km2'],
-                defaultValue=0
+                self.tr("Units"),
+                options=["pixels", "mapunits", "m2", "km2"],
+                defaultValue=0,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterRasterDestination(
-                self.OUTPUT,
-                self.tr('Output Stream Raster')
+                self.OUTPUT, self.tr("Output Stream Raster")
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        input_raster = self.parameterAsRasterLayer(parameters, self.INPUT_RASTER, context)
+        input_raster = self.parameterAsRasterLayer(
+            parameters, self.INPUT_RASTER, context
+        )
         if input_raster is None:
             raise QgsProcessingException("Invalid input raster layer")
 
         threshold = self.parameterAsDouble(parameters, self.THRESHOLD, context)
-        units = ['pixels', 'mapunits', 'm2', 'km2'][
+        units = ["pixels", "mapunits", "m2", "km2"][
             self.parameterAsEnum(parameters, self.UNITS, context)
         ]
 
         input_path = input_raster.source()
         dem = tt.read_tif(input_path)
         fd = tt.FlowObject(dem)
-        streams = tt.StreamObject(flow=fd,units=units,threshold=threshold)
-        w = np.zeros(fd.shape, dtype=bool, order='F').ravel(order='K')
+        streams = tt.StreamObject(flow=fd, units=units, threshold=threshold)
+        w = np.zeros(fd.shape, dtype=bool, order="F").ravel(order="K")
         w[streams.stream] = True
 
-        mask_2d = w.reshape(fd.shape, order='F').astype(np.uint8)
+        mask_2d = w.reshape(fd.shape, order="F").astype(np.uint8)
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         dem.z = mask_2d
         tt.write_tif(dem, output_path)
