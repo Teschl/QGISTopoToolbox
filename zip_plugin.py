@@ -9,7 +9,7 @@ import sys
 import zipfile
 
 PLUGIN_NAME = "QGIS_TopoToolbox.zip"
-EXCLUDE_DIRS = [".venv", "__pycache__", ".git", ".vscode", ".idea"]
+EXCLUDE_DIRS = [".venv", "__pycache__", ".git", ".vscode", ".idea", "ruff_cache"]
 EXCLUDE_FILES = []
 PLUGIN_ROOT_FOLDER = "QGISTopoToolbox"
 

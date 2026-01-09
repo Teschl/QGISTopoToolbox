@@ -13,13 +13,15 @@ Inside the TopoToolbox group, you will find all available algorithms, including:
 - Gradient8
 - Curvature
 - Evans slope
-- Extract Streams
+- prominence
+- z Score
+- extract_streams and stream_network do the same thing but with a different approach. Which is preferred still needs to be decided.
 
 The layers are saved as .tif files. This means that the algorithms represent workflows made up of one or more topotoolbox functions based on the desired output.
 
 ## Installing
 
-1. Compress the repository into a .zip file [`python3 zip_plugin.py`](###Script for creating plugin zip)
+1. Compress the repository into a .zip file [`python3 zip_plugin.py`](./zip_plugin.py)
 2. Navigate to 'Plugins' → 'Manage and Install Plugins...'
 3. Click on 'Install from ZIP'
 4. Select the .zip file and click 'Install Plugin'

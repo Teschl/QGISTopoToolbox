@@ -14,6 +14,7 @@ from .algorithms.evansslope import Evansslope
 from .algorithms.extract_streams import ExtractStreams
 from .algorithms.prominence import Prominence
 from .algorithms.zscore import ZScore
+from .algorithms.stream_network import StreamNetwork
 
 
 class TopoToolboxProvider(QgsProcessingProvider):
@@ -29,6 +30,7 @@ class TopoToolboxProvider(QgsProcessingProvider):
         self.addAlgorithm(ExtractStreams())
         self.addAlgorithm(Prominence())
         self.addAlgorithm(ZScore())
+        self.addAlgorithm(StreamNetwork())
 
     def id(self):
         return "topotoolbox"
