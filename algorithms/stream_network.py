@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingAlgorithm,
@@ -52,7 +51,7 @@ class StreamNetwork(QgsProcessingAlgorithm):
                 self.INPUT_RASTER, self.tr("Input DEM raster")
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.THRESHOLD,
@@ -70,17 +69,16 @@ class StreamNetwork(QgsProcessingAlgorithm):
                 defaultValue=0,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 self.OUTPUT,
                 self.tr("Output Stream Network"),
                 # IMPORTANT: specify .shp as default, else .gpkg is used
                 defaultValue="streams.shp",
-                type=QgsProcessing.TypeVectorLine
+                type=QgsProcessing.TypeVectorLine,
             )
         )
-
 
     def processAlgorithm(self, parameters, context, feedback):
         input_raster = self.parameterAsRasterLayer(
@@ -88,7 +86,7 @@ class StreamNetwork(QgsProcessingAlgorithm):
         )
         if input_raster is None:
             raise QgsProcessingException("Invalid input raster layer")
-        
+
         threshold = self.parameterAsDouble(parameters, self.THRESHOLD, context)
         units = ["pixels", "mapunits", "m2", "km2"][
             self.parameterAsEnum(parameters, self.UNITS, context)
@@ -96,22 +94,18 @@ class StreamNetwork(QgsProcessingAlgorithm):
 
         input_path = input_raster.source()
         dem = tt.read_tif(input_path)
-        
+
         fd = tt.FlowObject(dem)
         s = tt.StreamObject(flow=fd, units=units, threshold=threshold)
 
-        output_path = self.parameterAsOutputLayer(
-            parameters, self.OUTPUT, context
-        )
-        
+        output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+
         if not output_path.lower().endswith(".shp"):
             output_path = output_path + ".shp"
         else:
             output_path = output_path
 
-
         # Write shapefile
         s.to_shapefile(output_path)
 
         return {self.OUTPUT: output_path}
-
