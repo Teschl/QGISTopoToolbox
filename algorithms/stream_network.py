@@ -73,7 +73,7 @@ class StreamNetwork(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 self.OUTPUT,
-                self.tr("Output Stream Network"),
+                self.tr("Output Stream Network (use .shp file extension)"),
                 # IMPORTANT: specify .shp as default, else .gpkg is used
                 defaultValue="streams.shp",
                 type=QgsProcessing.TypeVectorLine,
@@ -101,9 +101,7 @@ class StreamNetwork(QgsProcessingAlgorithm):
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
 
         if not output_path.lower().endswith(".shp"):
-            output_path = output_path + ".shp"
-        else:
-            output_path = output_path
+            raise QgsProcessingException("Output file must be a .shp shapefile")
 
         # Write shapefile
         s.to_shapefile(output_path)

@@ -21,7 +21,7 @@ The layers are saved as .tif files. This means that the algorithms represent wor
 
 ## Installing
 
-1. Compress the repository into a .zip file [`python3 zip_plugin.py`](./zip_plugin.py)
+1. Compress the repository into a .zip file. Use `python3 zip_plugin.py` to automatically exclude parts of the repository that are not needed (for example ./venv/)
 2. Navigate to 'Plugins' → 'Manage and Install Plugins...'
 3. Click on 'Install from ZIP'
 4. Select the .zip file and click 'Install Plugin'
@@ -35,7 +35,7 @@ We have to do it this way because QGIS only ships with certain packages installe
 
 ### Script for creating plugin zip
 
-Since manually zipping the whole repository may include unwanted files (.venv) you can use the zip_plugin.py command line tool. Use it by calling `python3 zip_plugin.py`
+Since manually zipping the whole repository may include unwanted files (.venv) you can use the zip_plugin Python command line tool. Use it by calling `python3 zip_plugin.py`
 
 To use a custom name for the created zip, use `python3 zip_plugin.py -o SomeDifferentName.zip`
 
@@ -80,3 +80,10 @@ black --check --diff .
 # Check ruff checks
 ruff check .
 ```
+
+### How to add more Algorithms to the Processing Toolbox
+
+1. Create a new .py file in the [algorithms](./algorithms/) folder
+2. Create the QgsProcessingAlgorithm like in already existing files
+3. Import the created class in [topotoolboxplugin.py](./topotoolboxplugin.py) and add it to loadAlgorithms function
+4. Zip the again and reinstall the plugin in QGIS

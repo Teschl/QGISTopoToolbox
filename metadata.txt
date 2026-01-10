@@ -1,12 +1,12 @@
 [general]
 name=TopoToolbox
-description=Analysis and visualization of topographic data.
-about=
+description=Analysis and visualization of topographic data
+about=The QGIS implementation of TopoToolbox
 version=0.0.1
-tracker=
+tracker=https://github.com/TopoToolbox/issues
 repository=https://github.com/TopoToolbox/
 qgisMinimumVersion=3.0
-author=
+author=https://github.com/TopoToolbox
 email=
 
 category=Analysis
