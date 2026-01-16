@@ -33,7 +33,7 @@ class Excesstopography(QgsProcessingAlgorithm):
         return self.tr("Excesstopography")
 
     def shortHelpString(self):
-        return self.tr("")
+        return self.tr("Compute the two-dimensional excess topography.")
 
     def icon(self):
         base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -70,7 +70,7 @@ class Excesstopography(QgsProcessingAlgorithm):
         input_raster = self.parameterAsRasterLayer(
             parameters, self.INPUT_RASTER, context
         )
-        threshold = self.parameterAsNumber(parameters, self.THRESHOLD, context)
+        threshold = self.parameterAsDouble(parameters, self.THRESHOLD, context)
         method = self.parameterAsEnum(parameters, self.METHOD, context)
 
         if input_raster is None:
