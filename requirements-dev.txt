@@ -1,0 +1,4 @@
+topotoolbox==0.0.7
+black==25.1.0
+pre-commit==4.5.1
+ruff==0.14.10

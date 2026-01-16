@@ -1,0 +1,21 @@
+[general]
+name=TopoToolbox
+description=Analysis and visualization of topographic data
+about=The QGIS implementation of TopoToolbox
+version=0.0.1
+tracker=https://github.com/TopoToolbox/issues
+repository=https://github.com/TopoToolbox/
+qgisMinimumVersion=3.0
+author=https://github.com/TopoToolbox
+email=
+
+category=Analysis
+tags=analysis
+homepage=https://topotoolbox.wordpress.com/
+
+icon=icons/logo.png
+
+experimental=False
+deprecated=False
+
+plugin_dependencies=qpip
