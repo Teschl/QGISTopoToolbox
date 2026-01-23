@@ -1,20 +1,20 @@
 import os
+import numpy as np
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterRasterDestination,
     QgsProcessingException,
-    QgsProcessing,
 )
 from qgis.PyQt.QtGui import QIcon
 
 import topotoolbox as tt
 
 
-class StreamNetwork(QgsProcessingAlgorithm):
+class StreamNetworkRaster(QgsProcessingAlgorithm):
 
     INPUT_RASTER = "INPUT_RASTER"
     THRESHOLD = "THRESHOLD"
@@ -22,16 +22,16 @@ class StreamNetwork(QgsProcessingAlgorithm):
     OUTPUT = "OUTPUT"
 
     def createInstance(self):
-        return StreamNetwork()
+        return StreamNetworkRaster()
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
 
     def name(self):
-        return "Stream Network"
+        return "streamnetworkraster"
 
     def displayName(self):
-        return self.tr("Stream Network")
+        return self.tr("Stream Network (Raster)")
 
     def shortHelpString(self):
         return self.tr(
@@ -46,6 +46,7 @@ class StreamNetwork(QgsProcessingAlgorithm):
         return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):
+
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT_RASTER, self.tr("Input DEM raster")
@@ -55,7 +56,7 @@ class StreamNetwork(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.THRESHOLD,
-                self.tr("Threshold (0 = auto threshold)"),
+                self.tr("Threshold (0 = auto threshold of 1000)"),
                 QgsProcessingParameterNumber.Double,
                 defaultValue=1000.0,
             )
@@ -64,17 +65,15 @@ class StreamNetwork(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.UNITS,
-                self.tr("Units"),
+                self.tr("Units (default: pixels"),
                 options=["pixels", "mapunits", "m2", "km2"],
                 defaultValue=0,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterVectorDestination(
-                self.OUTPUT,
-                self.tr("Output Stream Network"),
-                type=QgsProcessing.TypeVectorLine,
+            QgsProcessingParameterRasterDestination(
+                self.OUTPUT, self.tr("Output Stream Network (Raster)")
             )
         )
 
@@ -96,8 +95,12 @@ class StreamNetwork(QgsProcessingAlgorithm):
         fd = tt.FlowObject(dem)
         s = tt.StreamObject(flow=fd, units=units, threshold=threshold)
 
-        output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        w = np.zeros(fd.shape, dtype=bool, order="F").ravel(order="K")
+        w[s.stream] = True
 
-        s.to_shapefile(output_path)
+        mask_2d = w.reshape(fd.shape, order="F").astype(np.uint8)
+        output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
+        dem.z = mask_2d
+        tt.write_tif(dem, output_path)
 
         return {self.OUTPUT: output_path}

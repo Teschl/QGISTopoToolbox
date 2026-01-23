@@ -1,37 +1,41 @@
 import os
-import numpy as np
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterNumber,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterRasterDestination,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterVectorDestination,
     QgsProcessingException,
+    QgsProcessing,
+    QgsVectorLayer,
+    edit,
 )
 from qgis.PyQt.QtGui import QIcon
 
 import topotoolbox as tt
 
 
-class ExtractStreams(QgsProcessingAlgorithm):
+class StreamNetworkVector(QgsProcessingAlgorithm):
 
     INPUT_RASTER = "INPUT_RASTER"
     THRESHOLD = "THRESHOLD"
     UNITS = "UNITS"
     OUTPUT = "OUTPUT"
+    HALF_SHIFT = "HALF_SHIFT"
 
     def createInstance(self):
-        return ExtractStreams()
+        return StreamNetworkVector()
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
 
     def name(self):
-        return "extractstreams"
+        return "streamnetworkvector"
 
     def displayName(self):
-        return self.tr("Extract Streams")
+        return self.tr("Stream Network (Vector)")
 
     def shortHelpString(self):
         return self.tr(
@@ -46,7 +50,6 @@ class ExtractStreams(QgsProcessingAlgorithm):
         return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):
-
         self.addParameter(
             QgsProcessingParameterRasterLayer(
                 self.INPUT_RASTER, self.tr("Input DEM raster")
@@ -56,7 +59,7 @@ class ExtractStreams(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.THRESHOLD,
-                self.tr("Threshold (0 = auto threshold)"),
+                self.tr("Threshold (0 = auto threshold of 1000)"),
                 QgsProcessingParameterNumber.Double,
                 defaultValue=1000.0,
             )
@@ -65,15 +68,29 @@ class ExtractStreams(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.UNITS,
-                self.tr("Units"),
+                self.tr("Units (default: pixels)"),
                 options=["pixels", "mapunits", "m2", "km2"],
                 defaultValue=0,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterRasterDestination(
-                self.OUTPUT, self.tr("Output Stream Raster")
+            QgsProcessingParameterVectorDestination(
+                self.OUTPUT,
+                self.tr("Output Stream Network (Vector)"),
+                type=QgsProcessing.TypeVectorLine,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.HALF_SHIFT,
+                self.tr(
+                    "Apply half-cell shift to output vector layer. If disabled, "
+                    "streams vertexes will fall on cell corners of input dem."
+                    " (i.e. shifts by cellsize/2 to the right and down)."
+                ),
+                defaultValue=True,
             )
         )
 
@@ -91,14 +108,25 @@ class ExtractStreams(QgsProcessingAlgorithm):
 
         input_path = input_raster.source()
         dem = tt.read_tif(input_path)
-        fd = tt.FlowObject(dem)
-        streams = tt.StreamObject(flow=fd, units=units, threshold=threshold)
-        w = np.zeros(fd.shape, dtype=bool, order="F").ravel(order="K")
-        w[streams.stream] = True
 
-        mask_2d = w.reshape(fd.shape, order="F").astype(np.uint8)
+        fd = tt.FlowObject(dem)
+        s = tt.StreamObject(flow=fd, units=units, threshold=threshold)
+
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        dem.z = mask_2d
-        tt.write_tif(dem, output_path)
+
+        s.to_shapefile(output_path)
+
+        half_shift = self.parameterAsBool(parameters, self.HALF_SHIFT, context)
+
+        if half_shift:
+            layer = QgsVectorLayer(output_path, "streams", "ogr")
+            cell = dem.cellsize
+
+            with edit(layer):
+                for f in layer.getFeatures():
+                    geom = f.geometry()
+                    geom.translate(cell / 2, -cell / 2)
+                    f.setGeometry(geom)
+                    layer.updateFeature(f)
 
         return {self.OUTPUT: output_path}

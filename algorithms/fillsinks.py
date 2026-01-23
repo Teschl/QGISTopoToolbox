@@ -35,7 +35,7 @@ class Fillsinks(QgsProcessingAlgorithm):
 
     def icon(self):
         base_dir = os.path.dirname(os.path.dirname(__file__))
-        icon_path = os.path.join(base_dir, "icons", "fillsinks.png")
+        icon_path = os.path.join(base_dir, "icons", "logo.png")
         return QIcon(icon_path)
 
     def initAlgorithm(self, config=None):

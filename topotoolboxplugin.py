@@ -11,10 +11,10 @@ from .algorithms.excesstopgraphy import Excesstopography
 from .algorithms.gradient8 import Gradient8
 from .algorithms.curvature import Curvature
 from .algorithms.evansslope import Evansslope
-from .algorithms.extract_streams import ExtractStreams
+from .algorithms.stream_network_raster import StreamNetworkRaster
 from .algorithms.prominence import Prominence
 from .algorithms.zscore import ZScore
-from .algorithms.stream_network import StreamNetwork
+from .algorithms.stream_network_vector import StreamNetworkVector
 
 
 class TopoToolboxProvider(QgsProcessingProvider):
@@ -27,10 +27,10 @@ class TopoToolboxProvider(QgsProcessingProvider):
         self.addAlgorithm(Gradient8())
         self.addAlgorithm(Curvature())
         self.addAlgorithm(Evansslope())
-        self.addAlgorithm(ExtractStreams())
         self.addAlgorithm(Prominence())
         self.addAlgorithm(ZScore())
-        self.addAlgorithm(StreamNetwork())
+        self.addAlgorithm(StreamNetworkRaster())
+        self.addAlgorithm(StreamNetworkVector())
 
     def id(self):
         return "topotoolbox"
