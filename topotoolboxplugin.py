@@ -6,13 +6,31 @@ from qgis.core import (
 )
 from qgis.PyQt.QtGui import QIcon
 
+from .algorithms.fillsinks import Fillsinks
+from .algorithms.excesstopgraphy import Excesstopography
+from .algorithms.gradient8 import Gradient8
+from .algorithms.curvature import Curvature
+from .algorithms.evansslope import Evansslope
+from .algorithms.stream_network_raster import StreamNetworkRaster
+from .algorithms.prominence import Prominence
+from .algorithms.zscore import ZScore
+from .algorithms.stream_network_vector import StreamNetworkVector
+
 
 class TopoToolboxProvider(QgsProcessingProvider):
     def __init__(self):
         super().__init__()
 
     def loadAlgorithms(self):
-        pass
+        self.addAlgorithm(Fillsinks())
+        self.addAlgorithm(Excesstopography())
+        self.addAlgorithm(Gradient8())
+        self.addAlgorithm(Curvature())
+        self.addAlgorithm(Evansslope())
+        self.addAlgorithm(Prominence())
+        self.addAlgorithm(ZScore())
+        self.addAlgorithm(StreamNetworkRaster())
+        self.addAlgorithm(StreamNetworkVector())
 
     def id(self):
         return "topotoolbox"
